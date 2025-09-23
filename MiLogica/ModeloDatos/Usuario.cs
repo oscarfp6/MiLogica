@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace MiLogica.ModeloDatos
 {
+    public enum EstadoUsuario
+    {
+        Inactivo = 0,
+        Activo = 1,
+        Suspendido = 2
+    }
     public class Usuario
     {
         private int id;
