@@ -15,7 +15,7 @@ namespace MiLogica.ModeloDatos.Tests
         [TestMethod()]
         public void ComprobarPassWordTest()
         {
-            Usuario Jose = new Usuario(1, "usuario1", "password123", "Pérez","jose@gmail.com",false );
+            Usuario Jose = new Usuario(1, "usuario1", "password123", "Pérez", "jose@gmail.com", false);
             Assert.IsTrue(Jose.ComprobarPassWord("password123"));
             Console.WriteLine(Jose.Estado);
             Jose.ComprobarPassWord("wrongpass");
@@ -24,6 +24,12 @@ namespace MiLogica.ModeloDatos.Tests
             Console.WriteLine(Jose.Estado);
             Console.WriteLine("Esperando 5 segundos para desbloquear..., introducimos contraseña correcta");
             Assert.IsFalse(Jose.ComprobarPassWord("password123"));
+        }
+
+        [TestMethod()]
+        public void CambiarPasswordTest()
+        {
+            Assert.Fail();
         }
     }
 }
