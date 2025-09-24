@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
+VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiLogica", "MiLogica\MiLogica.csproj", "{6EB98AD4-15EC-497F-B86A-A5895C67056A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiLogicaTests", "MiLogicaTests\MiLogicaTests.csproj", "{5DEE56BC-F332-4FFA-BA08-763829AE42D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datos", "ClassLibrary1\Datos.csproj", "{F534DCCB-E123-4EFF-8FEE-779C38830796}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5DEE56BC-F332-4FFA-BA08-763829AE42D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DEE56BC-F332-4FFA-BA08-763829AE42D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DEE56BC-F332-4FFA-BA08-763829AE42D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

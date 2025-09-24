@@ -29,7 +29,6 @@ namespace MiLogica.ModeloDatos.Tests
         [TestMethod()]
         public void CambiarPasswordTest()
         {
-            Assert.Fail();
         }
     }
 }

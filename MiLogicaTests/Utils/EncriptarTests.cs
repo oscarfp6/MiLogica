@@ -14,7 +14,11 @@ namespace MiLogica.Utils.Tests
         [TestMethod()]
         public void EncriptarPasswordTest()
         {
-            Assert.Fail();
+            string password1 = "hola1234";
+            string password2 = "hola1234";
+            string password1Encriptada = Encriptar.EncriptarPasswordSHA256(password1);
+            string password2Encriptada = Encriptar.EncriptarPasswordSHA256(password2);
+            Assert.AreEqual(password1Encriptada, password2Encriptada);
         }
     }
 }

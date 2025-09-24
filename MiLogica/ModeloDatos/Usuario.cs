@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using MiLogica.Utils;
 
 namespace MiLogica.ModeloDatos
 {
@@ -12,16 +14,27 @@ namespace MiLogica.ModeloDatos
     public class Usuario
     {
         private int id;
-        public int Id { get;}
+        private int Id { get;}
+
+
         private string nombre;
-        public string Nombre { get; }
+        private string Nombre { get; }
+
         private string password;
+        private string Password { set { this.password = Encriptar.EncriptarPasswordSHA256(value); } }
+
         private string apellidos;
-        public string Apellidos { get; }
-        private string email;
+        private string Apellidos { get; }
+
+
+        public string email;
         public string Email { get; }
+
         private bool suscripcion;
         public bool Suscripcion { get; set; }
+
+        public DateTime lastLogin;
+        private DateTime LastLogin { get; set; }
 
 
         //Atributos para la lógica de bloqueo
@@ -33,7 +46,7 @@ namespace MiLogica.ModeloDatos
         {
             this.id = id;
             this.nombre = nombre;
-            this.password = password;
+            this.password = Encriptar.EncriptarPasswordSHA256(password);
             this.apellidos = apellidos;
             this.email = email;
             this.suscripcion = suscripcion;
@@ -52,12 +65,13 @@ namespace MiLogica.ModeloDatos
 
         public bool ComprobarPassWord(string passwordAComprobar)
         {
+            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(passwordAComprobar);
             if (estado == EstadoUsuario.Bloqueado)
             {
                 return false;
             }
 
-            if (this.password == passwordAComprobar)
+            if (this.password == passwordEncriptada)
             {
                 this.intentosFallidosTimestamps.Clear();
                 this.estado = EstadoUsuario.Activo;
@@ -69,7 +83,7 @@ namespace MiLogica.ModeloDatos
                 this.intentosFallidosTimestamps = this.intentosFallidosTimestamps
                     .Where(t => (now - t).TotalMinutes <= 5)
                     .ToList();
-                if (this.intentosFallidosTimestamps.Count >= 3)
+                if (this.intentosFallidosTimestamps.Count >=3)
                 {
                     this.estado = EstadoUsuario.Bloqueado;
 
@@ -80,9 +94,25 @@ namespace MiLogica.ModeloDatos
         
         public bool CambiarPassword(string passwordActual, string nuevoPassword)
         {
-            if(ComprobarPassWord(passwordActual) && estado==EstadoUsuario.Activo /*&&ValidarPassWord(passwordActual)*/) 
+            if(ComprobarPassWord(passwordActual) && estado==EstadoUsuario.Activo && Utils.Password.ValidarPassword(passwordActual)) 
             {
-                this.password= nuevoPassword;
+                this.password = nuevoPassword;
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
+        
+
+        public bool DesbloquearUsuario (string email, string passwordDado )
+        {
+            string passwordEncriptado = Utils.Encriptar.EncriptarPasswordSHA256(passwordDado);
+            if (this.email == email && this.estado == EstadoUsuario.Bloqueado && this.password == passwordEncriptado)
+            {
+                this.estado = EstadoUsuario.Activo;
+                this.intentosFallidosTimestamps.Clear();
                 return true;
             } else
             {
