@@ -12,15 +12,21 @@ namespace MiLogica.ModeloDatos
     public class Usuario
     {
         private int id;
+        public int Id { get;}
         private string nombre;
+        public string Nombre { get; }
         private string password;
         private string apellidos;
+        public string Apellidos { get; }
         private string email;
+        public string Email { get; }
         private bool suscripcion;
+        public bool Suscripcion { get; set; }
 
 
         //Atributos para la lógica de bloqueo
         private EstadoUsuario estado;
+
         private List<DateTime> intentosFallidosTimestamps;
 
         public Usuario(int id, string nombre, string password, string apellidos, string email, bool suscripcion)
@@ -71,9 +77,22 @@ namespace MiLogica.ModeloDatos
                 return false;
             }
         }
+        
+        public bool CambiarPassword(string passwordActual, string nuevoPassword)
+        {
+            if(ComprobarPassWord(passwordActual) && estado==EstadoUsuario.Activo /*&&ValidarPassWord(passwordActual)*/) 
+            {
+                this.password= nuevoPassword;
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
 
 
     }
+
 
 
 }

@@ -22,6 +22,8 @@ namespace MiLogica.ModeloDatos.Tests
             Jose.ComprobarPassWord("wrongpass");
             Jose.ComprobarPassWord("wrongpass");
             Console.WriteLine(Jose.Estado);
+            Console.WriteLine("Esperando 5 segundos para desbloquear..., introducimos contraseña correcta");
+            Assert.IsFalse(Jose.ComprobarPassWord("password123"));
         }
     }
 }
