@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace MiLogica.ModeloDatos
 {
-    public enum EstadoUsuario
-    {
-        Inactivo = 0,
-        Activo = 1,
-        Suspendido = 2
-    }
+
     public class Usuario
     {
         private int id;
@@ -20,6 +17,63 @@ namespace MiLogica.ModeloDatos
         private string apellidos;
         private string email;
         private bool suscripcion;
-        private int estado;
+
+
+        //Atributos para la lógica de bloqueo
+        private EstadoUsuario estado;
+        private List<DateTime> intentosFallidosTimestamps;
+
+        public Usuario(int id, string nombre, string password, string apellidos, string email, bool suscripcion)
+        {
+            this.id = id;
+            this.nombre = nombre;
+            this.password = password;
+            this.apellidos = apellidos;
+            this.email = email;
+            this.suscripcion = suscripcion;
+
+            this.estado = EstadoUsuario.Activo;
+            this.intentosFallidosTimestamps = new List<DateTime>(); // ¡Esta es la línea clave!
+
+        }
+
+
+        public EstadoUsuario Estado
+        {
+            get { return estado; }
+            private set { estado = value; }
+        }
+
+        public bool ComprobarPassWord(string passwordAComprobar)
+        {
+            if (estado == EstadoUsuario.Bloqueado)
+            {
+                return false;
+            }
+
+            if (this.password == passwordAComprobar)
+            {
+                this.intentosFallidosTimestamps.Clear();
+                this.estado = EstadoUsuario.Activo;
+                return true;
+            } else
+            {
+                this.intentosFallidosTimestamps.Add(DateTime.Now);
+                var now = DateTime.Now;
+                this.intentosFallidosTimestamps = this.intentosFallidosTimestamps
+                    .Where(t => (now - t).TotalMinutes <= 5)
+                    .ToList();
+                if (this.intentosFallidosTimestamps.Count >= 3)
+                {
+                    this.estado = EstadoUsuario.Bloqueado;
+
+                }
+                return false;
+            }
+        }
+
+
     }
+
+
 }
