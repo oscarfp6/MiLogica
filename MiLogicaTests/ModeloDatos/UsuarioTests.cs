@@ -15,25 +15,25 @@ namespace MiLogica.ModeloDatos.Tests
         [TestMethod()]
         public void PermitirLogin()
         {
-            Usuario Jose = new Usuario(1, "usuario1", "password123", "Pérez", "jose@gmail.com", false);
-            Assert.IsTrue(Jose.PermitirLogin("password123"));
+            Usuario Jose = new Usuario(1, "usuario1", "@Contraseñavalida123", "Pérez", "jose@gmail.com", false);
+            Assert.IsTrue(Jose.PermitirLogin("@Contraseñavalida123"));
             Console.WriteLine(Jose.Estado);
             Jose.PermitirLogin("wrongpass");
             Jose.PermitirLogin("wrongpass");
             Jose.PermitirLogin("wrongpass");
             Console.WriteLine(Jose.Estado);
             Console.WriteLine("Esperando 5 segundos para desbloquear..., introducimos contraseña correcta");
-            Assert.IsFalse(Jose.PermitirLogin("password123"));
+            Assert.IsFalse(Jose.PermitirLogin("@Contraseñavalida123"));
         }
 
         [TestMethod()]
 
         public void CambiarPasswordUsuarioActivoTest()
         {
-            Usuario Maria = new Usuario(2, "Maria", "miPass", "García", "maria@gmail.com", true);
+            Usuario Maria = new Usuario(2, "Maria", "@Contraseñavalida123", "García", "maria@gmail.com", true);
             Console.WriteLine(Maria.Estado);
             Assert.IsFalse(Maria.CambiarPassword("wrongPass", "newPass"));
-            Assert.IsTrue(Maria.CambiarPassword("miPass", "@contraseñaSegura123"));
+            Assert.IsTrue(Maria.CambiarPassword("@Contraseñavalida123", "@contraseñaSegura123"));
 
 
             Assert.IsTrue(Maria.ComprobarPassWord("@contraseñaSegura123"));
@@ -51,20 +51,20 @@ namespace MiLogica.ModeloDatos.Tests
         [TestMethod()]
         public void CambiarPasswordSimpleTest()
         {
-            Usuario oscar = new Usuario(3, "oscar", "pass1234", "Lopez", "oscar@gmail.com", false);
-            Assert.IsTrue(oscar.CambiarPassword("pass1234", "@contraseñaSegura123"));
+            Usuario oscar = new Usuario(3, "oscar", "@Contraseñavalida123", "Lopez", "oscar@gmail.com", false);
+            Assert.IsTrue(oscar.CambiarPassword("@Contraseñavalida123", "@contraseñaSegura123"));
         }
 
 
             [TestMethod()]
         public void CambiarPasswordUsuarioBloqueadooTest()
         {
-            Usuario Ana = new Usuario(2, "Ana", "miPass", "García", "ana@gmail.com",false);
+            Usuario Ana = new Usuario(2, "Ana", "@Contraseñavalida123", "García", "ana@gmail.com", false);
             Ana.PermitirLogin("wrongpass");
             Ana.PermitirLogin("wrongpass");
             Ana.PermitirLogin("wrongpass");
             Console.WriteLine(Ana.Estado);
-            Assert.IsFalse(Ana.CambiarPassword("miPass", "newPass"));
+            Assert.IsFalse(Ana.CambiarPassword("@Contraseñavalida123", "newPass"));
 
 
         }
@@ -72,9 +72,31 @@ namespace MiLogica.ModeloDatos.Tests
         [TestMethod()]
         public void ComprobarPasswordTest()
         {
-            Usuario juan = new Usuario(2, "juan", "passwd", "fernandez", "juan@gmail.com", false);
-            Assert.IsTrue(juan.ComprobarPassWord("passwd"));
+            Usuario juan = new Usuario(2, "juan", "@Contraseñavalida123", "fernandez", "juan@gmail.com", false);
+            Assert.IsTrue(juan.ComprobarPassWord("@Contraseñavalida123"));
             Assert.IsFalse(juan.ComprobarPassWord("fake"));
+        }
+
+        [TestMethod()]
+
+        public void DesbloquarUsuarioBloqueadoTest()
+        {
+            Usuario Luis = new Usuario(4, "Luis", "@Contraseñavalida123", "Martinez", "luis@gmail.com", true);
+            Luis.PermitirLogin("wrongpass");
+            Luis.PermitirLogin("wrongpass");
+            Luis.PermitirLogin("wrongpass");
+            Console.WriteLine(Luis.Estado);
+            Assert.IsFalse(Luis.PermitirLogin("@Contraseñavalida123"));
+            Assert.IsTrue(Luis.DesbloquearUsuario("luis@gmail.com", "@Contraseñavalida123"));
+            Console.WriteLine(Luis.Estado);
+            Assert.IsTrue(Luis.PermitirLogin("@Contraseñavalida123"));
+
+        }
+
+        public void DesbloquarUsuarioActivoTest()
+        {
+            Usuario Ana = new Usuario(2, "Ana", "@@Contraseñavalida123", "García", "ana@gmail.com", false);
+            Assert.IsFalse(Ana.DesbloquearUsuario("ana@gmail.com", "@@Contraseñavalida123"));
         }
     }
 }
