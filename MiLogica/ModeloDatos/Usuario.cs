@@ -63,46 +63,58 @@ namespace MiLogica.ModeloDatos
             private set { estado = value; }
         }
 
-        public bool ComprobarPassWord(string passwordAComprobar)
+        public bool PermitirLogin(string password)
         {
-            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(passwordAComprobar);
-            if (estado == EstadoUsuario.Bloqueado)
-            {
-                return false;
-            }
-
+            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(password);
+            if (estado == EstadoUsuario.Bloqueado) { return false; }
             if (this.password == passwordEncriptada)
             {
                 this.intentosFallidosTimestamps.Clear();
                 this.estado = EstadoUsuario.Activo;
                 return true;
-            } else
+            }
+            else
             {
                 this.intentosFallidosTimestamps.Add(DateTime.Now);
                 var now = DateTime.Now;
                 this.intentosFallidosTimestamps = this.intentosFallidosTimestamps
                     .Where(t => (now - t).TotalMinutes <= 5)
                     .ToList();
-                if (this.intentosFallidosTimestamps.Count >=3)
+                if (this.intentosFallidosTimestamps.Count >= 3)
                 {
                     this.estado = EstadoUsuario.Bloqueado;
 
                 }
                 return false;
             }
+
         }
-        
-        public bool CambiarPassword(string passwordActual, string nuevoPassword)
+        public bool ComprobarPassWord(string passwordAComprobar)
         {
-            if(ComprobarPassWord(passwordActual) && estado==EstadoUsuario.Activo && Utils.Password.ValidarPassword(passwordActual)) 
-            {
-                this.password = nuevoPassword;
+            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(passwordAComprobar);
+
+
+            if (this.password == passwordEncriptada){
                 return true;
             } else
             {
                 return false;
             }
         }
+        
+        public bool CambiarPassword(string passwordActual, string nuevoPassword)
+        {
+            if(ComprobarPassWord(passwordActual) && estado==EstadoUsuario.Activo && Utils.Password.ValidarPassword(nuevoPassword)) 
+            {
+                this.password = Encriptar.EncriptarPasswordSHA256(nuevoPassword);
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
+
 
         
 
