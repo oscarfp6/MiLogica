@@ -71,10 +71,12 @@ namespace MiLogica.ModeloDatos
             {
                 this.intentosFallidosTimestamps.Clear();
                 this.estado = EstadoUsuario.Activo;
+                this.lastLogin = DateTime.Now;
                 return true;
             }
             else
             {
+                Console.WriteLine("Contraseña incorrecta");
                 this.intentosFallidosTimestamps.Add(DateTime.Now);
                 var now = DateTime.Now;
                 this.intentosFallidosTimestamps = this.intentosFallidosTimestamps
@@ -82,7 +84,8 @@ namespace MiLogica.ModeloDatos
                     .ToList();
                 if (this.intentosFallidosTimestamps.Count >= 3)
                 {
-                    this.estado = EstadoUsuario.Bloqueado;
+                    this.estado = EstadoUsuario.Bloqueado;          
+                    Console.WriteLine("Su cuenta ha sido bloqueada temporalmente por motivos de seguridad");
 
                 }
                 return false;
@@ -130,6 +133,16 @@ namespace MiLogica.ModeloDatos
             {
                 return false;
             }
+        }
+
+        public bool verificarInactividad() {
+            // Si el usuario ha estado inactivo por más de 6 meses (traducido a 182 días), cambiar su estado a Inactivo y devuelve true.
+            if (this.estado == EstadoUsuario.Activo && (DateTime.Now - this.lastLogin).TotalDays > 182 /*medio año*/)
+            {
+                this.estado = EstadoUsuario.Inactivo;
+                return true;
+            }
+            return false;
         }
 
 

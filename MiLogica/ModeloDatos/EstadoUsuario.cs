@@ -11,5 +11,6 @@ namespace MiLogica.ModeloDatos
         Activo,
         Inactivo,
         Bloqueado
+        //Deshabilitado por inactividad
     }
 }
