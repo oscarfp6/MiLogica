@@ -9,7 +9,7 @@ using MiLogica.ModeloDatos;
 
 namespace Datos
 {
-    using ClassLib;
+    //using ClassLib;
 
     namespace Database
     {

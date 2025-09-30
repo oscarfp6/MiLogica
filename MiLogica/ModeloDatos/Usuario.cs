@@ -46,7 +46,16 @@ namespace MiLogica.ModeloDatos
         {
             this.id = id;
             this.nombre = nombre;
-            this.password = Encriptar.EncriptarPasswordSHA256(password);
+            //this.password = Encriptar.EncriptarPasswordSHA256(password);
+            
+            if(Utils.Password.ValidarPassword(password))
+            {
+                this.password = Encriptar.EncriptarPasswordSHA256(password);
+            } else
+            {
+                throw new ArgumentException("La contraseña no cumple los requisitos de seguridad.");
+            }
+            
             this.apellidos = apellidos;
             this.email = email;
             this.suscripcion = suscripcion;
@@ -123,8 +132,7 @@ namespace MiLogica.ModeloDatos
 
         public bool DesbloquearUsuario (string email, string passwordDado )
         {
-            string passwordEncriptado = Utils.Encriptar.EncriptarPasswordSHA256(passwordDado);
-            if (this.email == email && this.estado == EstadoUsuario.Bloqueado && this.password == passwordEncriptado)
+            if (this.email == email && this.estado == EstadoUsuario.Bloqueado && ComprobarPassWord(passwordDado))
             {
                 this.estado = EstadoUsuario.Activo;
                 this.intentosFallidosTimestamps.Clear();
