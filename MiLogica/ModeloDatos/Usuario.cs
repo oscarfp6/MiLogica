@@ -46,7 +46,14 @@ namespace MiLogica.ModeloDatos
         {
             this.id = id;
             this.nombre = nombre;
-            this.password = Encriptar.EncriptarPasswordSHA256(password);
+            if (Utils.Password.ValidarPassword(password))
+            {
+                this.password = Encriptar.EncriptarPasswordSHA256(password);
+            }
+            else
+            {
+                throw new ArgumentException("La contraseña no cumple los requisitos de seguridad.");
+            }
             this.apellidos = apellidos;
             this.email = email;
             this.suscripcion = suscripcion;
