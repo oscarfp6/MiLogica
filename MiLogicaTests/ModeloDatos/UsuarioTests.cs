@@ -95,7 +95,7 @@ namespace MiLogica.ModeloDatos.Tests
 
         public void DesbloquarUsuarioActivoTest()
         {
-            Usuario Ana = new Usuario(2, "Ana", "@@Contraseñavalida123", "García", "ana@gmail.com", false);
+            Usuario Ana = new Usuario(2, "Ana", "@Contraseñavalida123", "García", "ana@gmail.com", false);
             Assert.IsFalse(Ana.DesbloquearUsuario("ana@gmail.com", "@@Contraseñavalida123"));
         }
     }
