@@ -10,10 +10,25 @@ namespace Datos
 {
     public class CapaDatos : ICapaDatos
     {
-        List<Usuario> tblUsuarios = new List<Usuario>();
+        private static List<Usuario> tblUsuarios;
+        private static List<Actividad> tblActividades;
+
+        private static int _nextUserId = 1;
+        private static int _nextActividadId = 1;
+
+
+        public void Inicializa()
+        {
+            tblUsuarios = new List<Usuario>();
+            tblActividades = new List<Actividad>();
+        }
+
+
+
         bool ICapaDatos.GuardaActividad(Actividad e)
         {
-            throw new NotImplementedException();
+            tblActividades.Add(e);
+            return true;
         }
 
         bool ICapaDatos.GuardaUsuario(Usuario u)
@@ -28,7 +43,7 @@ namespace Datos
 
         Actividad ICapaDatos.LeeActividad(int idElemento)
         {
-            throw new NotImplementedException();
+            return
         }
 
         Usuario ICapaDatos.LeeUsuario(string email)

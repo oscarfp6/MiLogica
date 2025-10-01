@@ -34,11 +34,10 @@ namespace MiLogica.ModeloDatos
         public bool Suscripcion { get; set; }
 
         public DateTime lastLogin;
-        private DateTime LastLogin { get; set; }
 
 
         //Atributos para la lógica de bloqueo
-        private EstadoUsuario estado;
+        private  EstadoUsuario estado;
 
         private List<DateTime> intentosFallidosTimestamps;
 
@@ -55,11 +54,18 @@ namespace MiLogica.ModeloDatos
                 throw new ArgumentException("La contraseña no cumple los requisitos de seguridad.");
             }
             this.apellidos = apellidos;
-            this.email = email;
+            if (Utils.Email.ValidarEmail(email))
+            {
+                this.email = email;
+            } else
+            {
+                throw new ArgumentException("El formato del email no es válido.");
+            }
             this.suscripcion = suscripcion;
 
             this.estado = EstadoUsuario.Activo;
             this.intentosFallidosTimestamps = new List<DateTime>(); // ¡Esta es la línea clave!
+            this.lastLogin = DateTime.Now;
 
         }
 
@@ -73,7 +79,8 @@ namespace MiLogica.ModeloDatos
         public bool PermitirLogin(string password)
         {
             string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(password);
-            if (estado == EstadoUsuario.Bloqueado) { return false; }
+            VerificarInactividad();
+            if (estado == EstadoUsuario.Bloqueado || estado == EstadoUsuario.Inactivo) { return false; }
             if (this.password == passwordEncriptada)
             {
                 this.intentosFallidosTimestamps.Clear();
@@ -131,10 +138,11 @@ namespace MiLogica.ModeloDatos
         public bool DesbloquearUsuario (string email, string passwordDado )
         {
             string passwordEncriptado = Utils.Encriptar.EncriptarPasswordSHA256(passwordDado);
-            if (this.email == email && this.estado == EstadoUsuario.Bloqueado && this.password == passwordEncriptado)
+            if (this.email == email && (this.estado == EstadoUsuario.Bloqueado || this.estado == EstadoUsuario.Inactivo) && this.password == passwordEncriptado)
             {
                 this.estado = EstadoUsuario.Activo;
                 this.intentosFallidosTimestamps.Clear();
+                this.lastLogin = DateTime.Now;
                 return true;
             } else
             {
@@ -142,15 +150,22 @@ namespace MiLogica.ModeloDatos
             }
         }
 
-        public bool verificarInactividad() {
-            // Si el usuario ha estado inactivo por más de 6 meses (traducido a 182 días), cambiar su estado a Inactivo y devuelve true.
-            if (this.estado == EstadoUsuario.Activo && (DateTime.Now - this.lastLogin).TotalDays > 182 /*medio año*/)
+
+
+        
+        public void VerificarInactividad()
+        {
+            if (this.Estado == EstadoUsuario.Activo)
             {
-                this.estado = EstadoUsuario.Inactivo;
-                return true;
+                TimeSpan tiempoSinAcceder = DateTime.Now - this.lastLogin;
+                if(tiempoSinAcceder > TimeSpan.FromDays(182)) // Aproximadamente 6 meses
+                {
+                    this.Estado = EstadoUsuario.Inactivo;
+                }
             }
-            return false;
         }
+
+       
 
 
     }

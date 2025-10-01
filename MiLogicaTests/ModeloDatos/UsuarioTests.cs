@@ -13,7 +13,7 @@ namespace MiLogica.ModeloDatos.Tests
     public class UsuarioTests
     {
         [TestMethod()]
-        public void PermitirLogin()
+        public void PermitirLoginTest()
         {
             Usuario Jose = new Usuario(1, "usuario1", "@Contraseñavalida123", "Pérez", "jose@gmail.com", false);
             Assert.IsTrue(Jose.PermitirLogin("@Contraseñavalida123"));
@@ -38,7 +38,7 @@ namespace MiLogica.ModeloDatos.Tests
 
             Assert.IsTrue(Maria.ComprobarPassWord("@contraseñaSegura123"));
             Console.WriteLine("Probamos a cambiar la contraseña a una inválida/insegura");
-            if(Maria.CambiarPassword("newPass", "short"))
+            if (Maria.CambiarPassword("newPass", "short"))
                 Console.WriteLine("La contraseña se ha cambiado a una insegura, hay un error.");
             else
                 Console.WriteLine("La contraseña no cumple los requisitos de seguridad, no se ha cambiado.");
@@ -56,7 +56,7 @@ namespace MiLogica.ModeloDatos.Tests
         }
 
 
-            [TestMethod()]
+        [TestMethod()]
         public void CambiarPasswordUsuarioBloqueadooTest()
         {
             Usuario Ana = new Usuario(2, "Ana", "@Contraseñavalida123", "García", "ana@gmail.com", false);
@@ -93,10 +93,36 @@ namespace MiLogica.ModeloDatos.Tests
 
         }
 
+        [TestMethod()]
         public void DesbloquarUsuarioActivoTest()
         {
             Usuario Ana = new Usuario(2, "Ana", "@Contraseñavalida123", "García", "ana@gmail.com", false);
             Assert.IsFalse(Ana.DesbloquearUsuario("ana@gmail.com", "@@Contraseñavalida123"));
         }
+
+        [TestMethod()]
+        public void DesbloquarUsuarioInactivoTest()
+        {
+            Usuario Pedro = new Usuario(5, "Pedro", "@Contraseñavalida123", "Sanchez", "pedro@gmail.com", true);
+            Pedro.lastLogin = DateTime.Now.AddDays(-200);
+            Pedro.VerificarInactividad();
+            Console.WriteLine(Pedro.Estado);
+            Assert.IsTrue(Pedro.DesbloquearUsuario("pedro@gmail.com", "@Contraseñavalida123"));
+
+        }
+
+        [TestMethod()]
+        public void VerificarInactividadTest()
+        {
+            Usuario Lucia = new Usuario(6, "Lucia", "@Contraseñavalida123", "Ruiz", "lucia@gmail.com", false);
+            Lucia.lastLogin = DateTime.Now.AddDays(-200);
+            Console.WriteLine(Lucia.Estado);
+            Assert.IsTrue(Lucia.Estado == EstadoUsuario.Activo);
+            Lucia.VerificarInactividad();
+            Assert.IsTrue(Lucia.Estado == EstadoUsuario.Inactivo);
+        }
+
+
+
     }
 }
