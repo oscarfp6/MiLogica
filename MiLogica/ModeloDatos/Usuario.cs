@@ -165,7 +165,12 @@ namespace MiLogica.ModeloDatos
             }
         }
 
-       
+        public override string ToString()
+        {
+            return $"ID: {id}, Nombre: {nombre}, Apellidos: {apellidos}, Email: {email}, Suscripción: {suscripcion}, Estado: {estado}, Último Login: {lastLogin}";
+        }
+
+
 
 
     }

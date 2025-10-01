@@ -122,7 +122,20 @@ namespace MiLogica.ModeloDatos.Tests
             Assert.IsTrue(Lucia.Estado == EstadoUsuario.Inactivo);
         }
 
+        [TestMethod()]
+        public void UsuarioTest()
+        {
+            // Prueba del constructor y ToString
+        }
 
-
+        [TestMethod()]
+        public void ToStringTest()
+        {
+            Usuario Marta = new Usuario(7, "Marta", "@Contraseñavalida123", "Hernandez", "marta@gmail.com", true);
+            Console.WriteLine(Marta.ToString());
+            Assert.IsTrue(Marta.ToString().Contains("Marta"));
+            Assert.IsTrue(Marta.ToString().Contains("Hernandez"));
+            Assert.IsTrue(Marta.ToString().Contains("marta@gmail.com"));
+        }
     }
 }
