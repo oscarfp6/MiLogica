@@ -17,17 +17,41 @@ namespace MiLogica.ModeloDatos.Tests
         {
             Usuario Jose = new Usuario(1, "usuario1", "@Contraseñavalida123", "Pérez", "jose@gmail.com", false);
             Assert.IsTrue(Jose.PermitirLogin("@Contraseñavalida123"));
-            Console.WriteLine(Jose.Estado);
-            Jose.PermitirLogin("wrongpass");
-            Jose.PermitirLogin("wrongpass");
-            Jose.PermitirLogin("wrongpass");
-            Console.WriteLine(Jose.Estado);
+            Console.WriteLine($"Estado tras login exitoso: {Jose.Estado}");
+            Assert.AreEqual(EstadoUsuario.Activo, Jose.Estado);
+
+            Jose.PermitirLogin("wrongpass1");
+            Jose.PermitirLogin("wrongpass2");
+            Assert.IsFalse(Jose.PermitirLogin("wrongpass3"));
+            Console.WriteLine($"Estado tras 3 fallos: {Jose.Estado}");
+            Assert.AreEqual(EstadoUsuario.Bloqueado, Jose.Estado);
+
             Console.WriteLine("Esperando 5 segundos para desbloquear..., introducimos contraseña correcta");
             Assert.IsFalse(Jose.PermitirLogin("@Contraseñavalida123"));
         }
 
         [TestMethod()]
+        public void PermitirLoginUsuarioInactivoBloqueoEstrictoTest()
+        {
+            Usuario David = new Usuario(8, "David", "@Contraseñavalida123", "Martín", "david@gmail.com", false);
 
+            David.lastLogin = DateTime.Now.AddDays(-200);
+            David.VerificarInactividad();
+            Console.WriteLine($"Estado Inicial: {David.Estado}");
+            Assert.AreEqual(EstadoUsuario.Inactivo, David.Estado);
+
+            Usuario InactivoReactivado = new Usuario(9, "Iñigo", "@Contraseñavalida123", "Lopez", "inigo@gmail.com", false);
+            InactivoReactivado.lastLogin = DateTime.Now.AddDays(-200);
+            InactivoReactivado.VerificarInactividad();
+            Assert.IsTrue(InactivoReactivado.PermitirLogin("@Contraseñavalida123"));
+            Assert.AreEqual(EstadoUsuario.Activo, InactivoReactivado.Estado, "El login correcto debe reactivar.");
+
+            Assert.IsFalse(David.PermitirLogin("wrongpass1"));
+            Console.WriteLine($"Estado tras 1 fallo estando Inactivo: {David.Estado}");
+            Assert.AreEqual(EstadoUsuario.Bloqueado, David.Estado, "Un solo fallo en Inactivo debe bloquear inmediatamente");
+        }
+
+            [TestMethod()]
         public void CambiarPasswordUsuarioActivoTest()
         {
             Usuario Maria = new Usuario(2, "Maria", "@Contraseñavalida123", "García", "maria@gmail.com", true);

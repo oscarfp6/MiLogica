@@ -14,7 +14,6 @@ namespace MiLogica.ModeloDatos
     public class Usuario
     {
         private int Id { get; set; }
-
         private string Nombre { get; set; }
         private string Apellidos { get; set; }
         public bool Suscripcion { get; set; }
@@ -84,6 +83,12 @@ namespace MiLogica.ModeloDatos
             }
             else
             {
+                if (estabaInactivo)
+                {
+                    this.Estado = EstadoUsuario.Bloqueado; // Bloqueo inmediato
+                    this.intentosFallidosTimestamps.Clear(); // Limpiamos por si acaso
+                    return false;
+                }
                 this.intentosFallidosTimestamps.Add(DateTime.Now);
 
                 var now = DateTime.Now;
@@ -98,23 +103,23 @@ namespace MiLogica.ModeloDatos
             }
 
         }
-        
 
-        /**
+        public bool ComprobarPassWord(string passwordAComprobar)
+        {
+            return ComprobarHash(passwordAComprobar);
+        }
+
+
+        
         public bool DesbloquearUsuario (string email, string passwordDado )
         {
-            string passwordEncriptado = Utils.Encriptar.EncriptarPasswordSHA256(passwordDado);
-            if (this.email == email && (this.estado == EstadoUsuario.Bloqueado || this.estado == EstadoUsuario.Inactivo) && this.password == passwordEncriptado)
-            {
-                this.estado = EstadoUsuario.Activo;
-                this.intentosFallidosTimestamps.Clear();
-                this.lastLogin = DateTime.Now;
+            if (this.Email.Equals(email, StringComparison.OrdinalIgnoreCase) && (this.Estado == EstadoUsuario.Bloqueado || this.Estado == EstadoUsuario.Inactivo) && ComprobarHash) 
+            { 
+                RestablecerCuenta();
                 return true;
-            } else
-            {
-                return false;
             }
-        }**/
+            return false;
+        }
 
 
         public void VerificarInactividad()
@@ -131,7 +136,11 @@ namespace MiLogica.ModeloDatos
 
         public bool CambiarPassword(string passwordActual, string nuevoPassword)
         {
-            if(!ComprobarHash(passwordActual) || !Utils.Password.ValidarPassword(nuevoPassword))
+            if (this.Estado == EstadoUsuario.Bloqueado)
+            {
+                return false;
+            }
+            if (!ComprobarHash(passwordActual) || !Utils.Password.ValidarPassword(nuevoPassword))
             {
                 return false;
             }
