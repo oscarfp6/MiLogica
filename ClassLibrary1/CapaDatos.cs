@@ -24,7 +24,6 @@ namespace Datos
         }
 
 
-
         bool ICapaDatos.GuardaActividad(Actividad e)
         {
             tblActividades.Add(e);

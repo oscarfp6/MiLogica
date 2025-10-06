@@ -14,13 +14,13 @@ namespace MiLogica.ModeloDatos
         // --- Clave Foránea ---
         public int IdUsuario { get; private set; }
 
-        public double Kms { get; private set; }
-        public int MetrosDesnivel { get; private set; }
-        public TimeSpan Duracion { get; private set; }
-        public DateTime Fecha { get; private set; }
-        public TipoActividad Tipo { get; private set; }
+        public double Kms { get; set; }
+        public int MetrosDesnivel { get; set; }
+        public TimeSpan Duracion { get; set; }
+        public DateTime Fecha { get; set; }
+        public TipoActividad Tipo { get; set; }
         public String Descripcion { get; set; }
-        public int? FCMedia { get; private set; }
+        public int? FCMedia { get; set; }
 
         // --- Propiedad de Navegación ---
         // Esto le dice a EF Core que cada Actividad pertenece a un Usuario.
@@ -36,9 +36,9 @@ namespace MiLogica.ModeloDatos
             {
                 if (Kms > 0)
                 {
-                    return Duracion.TotalMinutes / Kms;
+                    return Math.Round(Duracion.TotalMinutes / Kms, 2);
                 }
-                return 0;
+                return 0.0;
             }
         }
 
@@ -48,22 +48,10 @@ namespace MiLogica.ModeloDatos
             {
                 if (Duracion.TotalHours > 0)
                 {
-                    return Kms / Duracion.TotalHours;
+                    return Math.Round(Kms / Duracion.TotalHours, 2);
                 }
                 return 0;
             }
-        }
-
-        public void ActualizarMetricas(double kms, int metrosDesnivel, TipoActividad tipo, TimeSpan duracion, string descripcion = "", int? fcMedia = null)
-        {
-            if (kms < 0) throw new ArgumentException("Los kilómetros no pueden ser negativos.");
-            if (duracion.TotalSeconds <= 0) throw new ArgumentException("La duración debe ser positiva.");
-            Kms = kms;
-            MetrosDesnivel = metrosDesnivel;
-            Duracion = duracion;
-            Descripcion = descripcion;
-            FCMedia = fcMedia;
-            Tipo = tipo;
         }
 
         private Actividad() { }
@@ -73,45 +61,46 @@ namespace MiLogica.ModeloDatos
         public Actividad(int idUsuario, double kms, int metrosDesnivel, TimeSpan duracion, DateTime fecha, TipoActividad tipo, string descripcion = "", int? fcMedia=null)
         {
             // Validación de datos en el constructor para asegurar la integridad del objeto
-            if (idUsuario <= 0) throw new ArgumentException("El ID de usuario debe ser válido.");
-            if (kms < 0) throw new ArgumentException("Los kilómetros no pueden ser negativos.");
-            if (duracion.TotalSeconds <= 0) throw new ArgumentException("La duración debe ser positiva.");
+            ValidarMetricas(kms, duracion);
 
-            IdUsuario = idUsuario;
-            Kms = kms;
-            MetrosDesnivel = metrosDesnivel;
-            Duracion = duracion;
-            Fecha = fecha;
-            Tipo = tipo;
-            Descripcion = descripcion;
-            FCMedia = fcMedia;
+            this.IdUsuario = idUsuario;
+            this.Kms = kms;
+            this.MetrosDesnivel = metrosDesnivel;
+            this.Duracion = duracion;
+            this.Fecha = fecha;
+            this.Tipo = tipo;
+            this.Descripcion = descripcion;
+            this.FCMedia = fcMedia;
         }
 
-        public Actividad(int idUsuario, double kms, int metrosDesnivel, TimeSpan duracion, DateTime fecha, TipoActividad tipo, string descripcion = "")
-        {
-            // Validación de datos en el constructor para asegurar la integridad del objeto
-            if (idUsuario <= 0) throw new ArgumentException("El ID de usuario debe ser válido.");
-            if (kms < 0) throw new ArgumentException("Los kilómetros no pueden ser negativos.");
-            if (duracion.TotalSeconds <= 0) throw new ArgumentException("La duración debe ser positiva.");
 
-            IdUsuario = idUsuario;
+        public void ActualizarMetricas(double kms, int metrosDesnivel, TipoActividad tipo, TimeSpan duracion, string descripcion = "", int? fcMedia = null)
+        {
+            ValidarMetricas(kms, duracion);
+            
             Kms = kms;
             MetrosDesnivel = metrosDesnivel;
             Duracion = duracion;
-            Fecha = fecha;
-            Tipo = tipo;
             Descripcion = descripcion;
+            FCMedia = fcMedia;
+            Tipo = tipo;
+        }
+
+        private static void ValidarMetricas(double kms, TimeSpan duracion) 
+        {
+            if (kms < 0) throw new ArgumentException("Los kilómetros no pueden ser negativos.");
+            if (duracion.TotalSeconds <= 0) throw new ArgumentException("La duración debe ser positiva.");
         }
 
         public override string ToString()
         {
             if (FCMedia.HasValue)
             {
-                return $"{Tipo}: {Kms:F2} km en {Duracion:hh\\:mm\\:ss} el {Fecha:dd/MM/yyyy} con FC media de {FCMedia} bpm";
+                return $"{Tipo}: {Kms:F2} km en {Duracion:hh\\:mm\\:ss} el {Fecha:dd/MM/yyyy} con FC media de {FCMedia} bpm. Ritmo: {RitmoMinPorKm:F2} min/km.";
             }
             else
             {
-                return $"{Tipo}: {Kms:F2} km en {Duracion:hh\\:mm\\:ss} el {Fecha:dd/MM/yyyy}";
+                return $"{Tipo}: {Kms:F2} km en {Duracion:hh\\:mm\\:ss} el {Fecha:dd/MM/yyyy}. Ritmo: {RitmoMinPorKm:F2} min/km.";
             }
         }
 
