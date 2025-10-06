@@ -13,67 +13,56 @@ namespace MiLogica.ModeloDatos
 
     public class Usuario
     {
-        private int id;
-        private int Id { get;}
+        private int Id { get; set; }
 
-
-        private string nombre;
-        private string Nombre { get; }
-
-        private string password;
-        private string Password { set { this.password = Encriptar.EncriptarPasswordSHA256(value); } }
-
-        private string apellidos;
-        private string Apellidos { get; }
-
-
-        public string email;
-        public string Email { get; }
-
-        private bool suscripcion;
+        private string Nombre { get; set; }
+        private string Apellidos { get; set; }
         public bool Suscripcion { get; set; }
 
-        public DateTime lastLogin;
+        public string Email { get; private set; }
+
+        private string _passwordHash;
+
+        public DateTime lastLogin { get; private set; }
 
 
         //Atributos para la lógica de bloqueo
-        private  EstadoUsuario estado;
+        private EstadoUsuario Estado { get; private set; }
 
         private List<DateTime> intentosFallidosTimestamps;
 
+        public Usuario() 
+        {
+            this.Email = string.Empty;
+            this.Nombre = string.Empty;
+            this.Apellidos = string.Empty;
+            this._passwordHash = string.Empty;
+            this.intentosFallidosTimestamps = new List<DateTime>();
+        }
+
         public Usuario(int id, string nombre, string password, string apellidos, string email, bool suscripcion)
         {
-            this.id = id;
-            this.nombre = nombre;
-            if (Utils.Password.ValidarPassword(password))
+
+            if (!Utils.Email.ValidarEmail(email))
             {
-                this.password = Encriptar.EncriptarPasswordSHA256(password);
+                throw new ArgumentException("El formato del email no es valido");
             }
-            else
+            if (!Utils.Password.ValidarPassword(password))
             {
                 throw new ArgumentException("La contraseña no cumple los requisitos de seguridad.");
             }
-            this.apellidos = apellidos;
-            if (Utils.Email.ValidarEmail(email))
-            {
-                this.email = email;
-            } else
-            {
-                throw new ArgumentException("El formato del email no es válido.");
-            }
+            this.Id = id;
+            this.Nombre = nombre;
+            this.Apellidos = apellidos;
+            this.Email = email;
             this.suscripcion = suscripcion;
+
+            this.password = Encriptar.EncriptarPasswordSHA256(password);
 
             this.estado = EstadoUsuario.Activo;
             this.intentosFallidosTimestamps = new List<DateTime>(); // ¡Esta es la línea clave!
             this.lastLogin = DateTime.Now;
 
-        }
-
-
-        public EstadoUsuario Estado
-        {
-            get { return estado; }
-            private set { estado = value; }
         }
 
         public bool PermitirLogin(string password)
