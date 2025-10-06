@@ -19,55 +19,116 @@ namespace Datos
 
         public void Inicializa()
         {
-            tblUsuarios = new List<Usuario>();
-            tblActividades = new List<Actividad>();
+            if (tblUsuarios == null) 
+            {
+                tblUsuarios = new List<Usuario>();
+                tblActividades = new List<Actividad>();
+                _nextUserId = 0;
+                _nextActividadId = 0;
+            }
+            
         }
 
 
         bool ICapaDatos.GuardaActividad(Actividad e)
         {
+            e.Id = _nextActividadId++;
+
             tblActividades.Add(e);
             return true;
+        }
+
+        bool ICapaDatos.ActualizaActividad(Actividad e)
+        {
+            var actividadExistente = tblActividades.FirstOrDefault(act => act.Id == e.Id);
+            if (actividadExistente != null)
+            {
+                actividadExistente.Titulo = e.Titulo;
+                actividadExistente.Descripcion = e.Descripcion;
+                actividadExistente.FechaCreacion = e.FechaCreacion;
+                actividadExistente.Estado = e.Estado;
+                return true;
+            }
+            return false;
+        }
+
+        bool ICapaDatos.EliminaActividad(int idElemento)
+        {
+            var actividadExistente = tblActividades.FirstOrDefault(act => act.Id == idElemento);
+            if (actividadExistente != null)
+            {
+                tblActividades.Remove(actividadExistente);
+                return true;
+            }
+            return false;
         }
 
         bool ICapaDatos.GuardaUsuario(Usuario u)
         {
             if(!tblUsuarios.Any(user => user.Email == u.Email))
             {
+                u.Id = _nextUserId++;
+
                 tblUsuarios.Add(u);
                 return true;
             }
             return false;
         }
 
-        Actividad ICapaDatos.LeeActividad(int idElemento)
+        bool ICapaDatos.ActualizaUsuario(Usuario u)
         {
-            return
+            var usuarioExistente = tblUsuarios.FirstOrDefault(user => user.Id == u.Id);
+            if (usuarioExistente != null)
+            {
+                usuarioExistente.Nombre = u.Nombre;
+                usuarioExistente.Apellidos = u.Apellidos;
+                usuarioExistente.Estado = u.Estado;
+                usuarioExistente.Hash = u.Hash;
+                return true;
+            }
+            return false;
         }
 
         Usuario ICapaDatos.LeeUsuario(string email)
         {
-            throw new NotImplementedException();
+            return tblUsuarios.FirstOrDefault(user => user.Email == email);
+        }
+
+        Usuario ICapaDatos.LeeUsuarioPorId(int idUsuario)
+        {
+            return tblUsuarios.FirstOrDefault(user => user.Id == idUsuario);
+        }
+
+        Actividad ICapaDatos.LeeActividad(int idElemento)
+        {
+            return tblActividades.FirstOrDefault(act => act.Id == idElemento);
+        }
+
+        List<Actividad> ICapaDatos.LeeActividades(int idUsuario)
+        {
+            return tblActividades.Where(act => act.IdUsuario == idUsuario).ToList();
         }
 
         int ICapaDatos.NumActividades(int idUsuario)
         {
-            throw new NotImplementedException();
+            return tblActividades.Count(act => act.IdUsuario == idUsuario);
         }
 
         int ICapaDatos.NumUsuarios()
         {
-            throw new NotImplementedException();
+            return tblUsuarios.Count;
         }
 
         int ICapaDatos.NumUsuariosActivos()
         {
-            throw new NotImplementedException();
+            return tblUsuarios.Count(user => user.Estado == EstadoUsuario.Activo);
         }
 
         bool ICapaDatos.ValidaUsuario(string email, string password)
         {
-            throw new NotImplementedException();
+            var usuario = ((ICapaDatos)this).LeeUsuario(email);
+            if (usuario == null) return false;
+            return usuario.ComprobarPassWord(password);
         }
     }
 }
