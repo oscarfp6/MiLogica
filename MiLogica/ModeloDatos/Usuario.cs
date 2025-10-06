@@ -23,7 +23,7 @@ namespace MiLogica.ModeloDatos
 
         private string _passwordHash;
 
-        public DateTime lastLogin { get; private set; }
+        public DateTime LastLogin { get; private set; }
 
 
         //Atributos para la lógica de bloqueo
@@ -57,73 +57,50 @@ namespace MiLogica.ModeloDatos
             this.Email = email;
             this.suscripcion = suscripcion;
 
-            this.password = Encriptar.EncriptarPasswordSHA256(password);
+            this._passwordHash = Encriptar.EncriptarPasswordSHA256(password);
 
-            this.estado = EstadoUsuario.Activo;
+            this.Estado = EstadoUsuario.Activo;
             this.intentosFallidosTimestamps = new List<DateTime>(); // ¡Esta es la línea clave!
-            this.lastLogin = DateTime.Now;
+            this.LastLogin = DateTime.Now;
 
         }
 
-        public bool PermitirLogin(string password)
+        public bool PermitirLogin(string passwordDado)
         {
-            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(password);
+
             VerificarInactividad();
-            if (estado == EstadoUsuario.Bloqueado || estado == EstadoUsuario.Inactivo) { return false; }
-            if (this.password == passwordEncriptada)
+            if (this.Estado == EstadoUsuario.Bloqueado) return false;
+
+            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(passwordDado);
+            bool esPasswordCorrecta = this._passwordHash.Equals(passwordEncriptada);
+            bool estabaInactivo = (this.Estado == EstadoUsuario.Inactivo);
+
+            if (esPasswordCorrecta)
             {
                 this.intentosFallidosTimestamps.Clear();
-                this.estado = EstadoUsuario.Activo;
+                Estado = EstadoUsuario.Activo;
                 this.lastLogin = DateTime.Now;
                 return true;
             }
             else
             {
-                Console.WriteLine("Contraseña incorrecta");
                 this.intentosFallidosTimestamps.Add(DateTime.Now);
+
                 var now = DateTime.Now;
                 this.intentosFallidosTimestamps = this.intentosFallidosTimestamps
-                    .Where(t => (now - t).TotalMinutes <= 5)
+                    .Where(t => (now - t).TotalMinutes <= 15)
                     .ToList();
-                if (this.intentosFallidosTimestamps.Count >= 3)
+
+                if (this.intentosFallidosTimestamps.Count >= 3) 
                 {
-                    this.estado = EstadoUsuario.Bloqueado;          
-                    Console.WriteLine("Su cuenta ha sido bloqueada temporalmente por motivos de seguridad");
-
+                    this.Estado = EstadoUsuario.Bloqueado;
                 }
-                return false;
             }
 
-        }
-        public bool ComprobarPassWord(string passwordAComprobar)
-        {
-            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(passwordAComprobar);
-
-
-            if (this.password == passwordEncriptada){
-                return true;
-            } else
-            {
-                return false;
-            }
         }
         
-        public bool CambiarPassword(string passwordActual, string nuevoPassword)
-        {
-            if(ComprobarPassWord(passwordActual) && estado==EstadoUsuario.Activo && Utils.Password.ValidarPassword(nuevoPassword)) 
-            {
-                this.password = Encriptar.EncriptarPasswordSHA256(nuevoPassword);
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
 
-
-
-        
-
+        /**
         public bool DesbloquearUsuario (string email, string passwordDado )
         {
             string passwordEncriptado = Utils.Encriptar.EncriptarPasswordSHA256(passwordDado);
@@ -137,11 +114,9 @@ namespace MiLogica.ModeloDatos
             {
                 return false;
             }
-        }
+        }**/
 
 
-
-        
         public void VerificarInactividad()
         {
             if (this.Estado == EstadoUsuario.Activo)
@@ -154,16 +129,41 @@ namespace MiLogica.ModeloDatos
             }
         }
 
+        public bool CambiarPassword(string passwordActual, string nuevoPassword)
+        {
+            if(!ComprobarHash(passwordActual) || !Utils.Password.ValidarPassword(nuevoPassword))
+            {
+                return false;
+            }
+            this._passwordHash = Encriptar.EncriptarPasswordSHA256(nuevoPassword);
+            this.RestablecerCuenta();
+            return true;
+        }
+
+        public void RestablecerCuenta()
+        {
+            this.Estado = EstadoUsuario.Activo;
+            this.intentosFallidosTimestamps.Clear();
+            this.LastLogin = DateTime.Now;
+        }
+
+        public void ActualizarPerfil(string nombre, string apellidos, bool suscripcion)
+        {
+            this.Nombre = nombre;
+            this.Apellidos = apellidos;
+            this.Suscripcion = suscripcion;
+        }
+
+        private bool ComprobarHash(string passwordAComprobar)
+        {
+            string passwordEncriptada = Encriptar.EncriptarPasswordSHA256(passwordAComprobar);
+            return this._passwordHash == passwordEncriptada;
+        }
+
         public override string ToString()
         {
             return $"ID: {id}, Nombre: {nombre}, Apellidos: {apellidos}, Email: {email}, Suscripción: {suscripcion}, Estado: {estado}, Último Login: {lastLogin}";
         }
 
-
-
-
     }
-
-
-
 }
