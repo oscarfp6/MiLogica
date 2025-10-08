@@ -9,10 +9,12 @@ namespace MiLogica.ModeloDatos
     public class Actividad
     {
         // Renombramos a "Id" para seguir la convención de EF Core para Primary Key
-        public int Id { get; private set; }
+        public int Id { get;  set; }
 
         // --- Clave Foránea ---
-        public int IdUsuario { get; private set; }
+        public int IdUsuario { get;  set; }
+
+        public string Titulo { get; set; }
 
         public double Kms { get; set; }
         public int MetrosDesnivel { get; set; }

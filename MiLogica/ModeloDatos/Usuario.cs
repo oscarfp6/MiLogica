@@ -18,15 +18,16 @@ namespace MiLogica.ModeloDatos
         public string Apellidos { get; set; }
         public bool Suscripcion { get; set; }
 
-        public string Email { get; private set; }
+        public string Email { get; 
+           set; }
 
-        private string _passwordHash;
+        public string _passwordHash;
 
-        public DateTime LastLogin { get; private set; }
+        public DateTime LastLogin { get;  set; }
 
 
         //Atributos para la lógica de bloqueo
-        public EstadoUsuario Estado { get; private set; }
+        public EstadoUsuario Estado { get;  set; }
 
         public List<DateTime> intentosFallidosTimestamps;
 
@@ -101,6 +102,7 @@ namespace MiLogica.ModeloDatos
                     this.Estado = EstadoUsuario.Bloqueado;
                 }
             }
+            return false;
 
         }
 

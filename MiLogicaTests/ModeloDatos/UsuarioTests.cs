@@ -35,13 +35,13 @@ namespace MiLogica.ModeloDatos.Tests
         {
             Usuario David = new Usuario(8, "David", "@Contraseñavalida123", "Martín", "david@gmail.com", false);
 
-            David.lastLogin = DateTime.Now.AddDays(-200);
+            David.LastLogin = DateTime.Now.AddDays(-200);
             David.VerificarInactividad();
             Console.WriteLine($"Estado Inicial: {David.Estado}");
             Assert.AreEqual(EstadoUsuario.Inactivo, David.Estado);
 
             Usuario InactivoReactivado = new Usuario(9, "Iñigo", "@Contraseñavalida123", "Lopez", "inigo@gmail.com", false);
-            InactivoReactivado.lastLogin = DateTime.Now.AddDays(-200);
+            InactivoReactivado.LastLogin = DateTime.Now.AddDays(-200);
             InactivoReactivado.VerificarInactividad();
             Assert.IsTrue(InactivoReactivado.PermitirLogin("@Contraseñavalida123"));
             Assert.AreEqual(EstadoUsuario.Activo, InactivoReactivado.Estado, "El login correcto debe reactivar.");
@@ -128,7 +128,7 @@ namespace MiLogica.ModeloDatos.Tests
         public void DesbloquarUsuarioInactivoTest()
         {
             Usuario Pedro = new Usuario(5, "Pedro", "@Contraseñavalida123", "Sanchez", "pedro@gmail.com", true);
-            Pedro.lastLogin = DateTime.Now.AddDays(-200);
+            Pedro.LastLogin = DateTime.Now.AddDays(-200);
             Pedro.VerificarInactividad();
             Console.WriteLine(Pedro.Estado);
             Assert.IsTrue(Pedro.DesbloquearUsuario("pedro@gmail.com", "@Contraseñavalida123"));
@@ -139,7 +139,7 @@ namespace MiLogica.ModeloDatos.Tests
         public void VerificarInactividadTest()
         {
             Usuario Lucia = new Usuario(6, "Lucia", "@Contraseñavalida123", "Ruiz", "lucia@gmail.com", false);
-            Lucia.lastLogin = DateTime.Now.AddDays(-200);
+            Lucia.LastLogin = DateTime.Now.AddDays(-200);
             Console.WriteLine(Lucia.Estado);
             Assert.IsTrue(Lucia.Estado == EstadoUsuario.Activo);
             Lucia.VerificarInactividad();

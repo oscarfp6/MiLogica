@@ -47,8 +47,9 @@ namespace Datos
             {
                 actividadExistente.Titulo = e.Titulo;
                 actividadExistente.Descripcion = e.Descripcion;
-                actividadExistente.FechaCreacion = e.FechaCreacion;
-                actividadExistente.estado = e.Estado;
+                actividadExistente.Kms = e.Kms;
+                actividadExistente.MetrosDesnivel = e.MetrosDesnivel;
+                actividadExistente.Duracion = e.Duracion;
                 return true;
             }
             return false;
@@ -85,7 +86,7 @@ namespace Datos
                 usuarioExistente.Nombre = u.Nombre;
                 usuarioExistente.Apellidos = u.Apellidos;
                 usuarioExistente.Estado = u.Estado;
-                usuarioExistente.Hash = u.Hash;
+                usuarioExistente._passwordHash = u._passwordHash;
                 return true;
             }
             return false;
