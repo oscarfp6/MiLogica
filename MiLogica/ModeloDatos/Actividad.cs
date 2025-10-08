@@ -9,7 +9,7 @@ namespace MiLogica.ModeloDatos
     public class Actividad
     {
         // Renombramos a "Id" para seguir la convención de EF Core para Primary Key
-        public int Id { get; set; }
+        public int Id { get; private set; }
 
         // --- Clave Foránea ---
         public int IdUsuario { get; private set; }
@@ -73,7 +73,6 @@ namespace MiLogica.ModeloDatos
             this.FCMedia = fcMedia;
         }
 
-
         public void ActualizarMetricas(double kms, int metrosDesnivel, TipoActividad tipo, TimeSpan duracion, string descripcion = "", int? fcMedia = null)
         {
             ValidarMetricas(kms, duracion);
@@ -103,9 +102,5 @@ namespace MiLogica.ModeloDatos
                 return $"{Tipo}: {Kms:F2} km en {Duracion:hh\\:mm\\:ss} el {Fecha:dd/MM/yyyy}. Ritmo: {RitmoMinPorKm:F2} min/km.";
             }
         }
-
-
-
-
     }
 }
