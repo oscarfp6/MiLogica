@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiLogicaTests", "MiLogicaTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datos", "ClassLibrary1\Datos.csproj", "{F534DCCB-E123-4EFF-8FEE-779C38830796}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "www1", "www1\www1.csproj", "{4D59579B-AF59-44EC-81C7-80AC77AB50E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F534DCCB-E123-4EFF-8FEE-779C38830796}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D59579B-AF59-44EC-81C7-80AC77AB50E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D59579B-AF59-44EC-81C7-80AC77AB50E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D59579B-AF59-44EC-81C7-80AC77AB50E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D59579B-AF59-44EC-81C7-80AC77AB50E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

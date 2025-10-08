@@ -13,9 +13,9 @@ namespace MiLogica.ModeloDatos
 
     public class Usuario
     {
-        private int Id { get; set; }
-        private string Nombre { get; set; }
-        private string Apellidos { get; set; }
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Apellidos { get; set; }
         public bool Suscripcion { get; set; }
 
         public string Email { get; private set; }
@@ -26,9 +26,9 @@ namespace MiLogica.ModeloDatos
 
 
         //Atributos para la lógica de bloqueo
-        private EstadoUsuario Estado { get; private set; }
+        public EstadoUsuario Estado { get; private set; }
 
-        private List<DateTime> intentosFallidosTimestamps;
+        public List<DateTime> intentosFallidosTimestamps;
 
         public Usuario() 
         {
@@ -54,7 +54,7 @@ namespace MiLogica.ModeloDatos
             this.Nombre = nombre;
             this.Apellidos = apellidos;
             this.Email = email;
-            this.suscripcion = suscripcion;
+            this.Suscripcion = suscripcion;
 
             this._passwordHash = Encriptar.EncriptarPasswordSHA256(password);
 

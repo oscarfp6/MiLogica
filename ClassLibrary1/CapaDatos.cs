@@ -19,6 +19,8 @@ namespace Datos
 
         public void Inicializa()
         {
+
+           
             if (tblUsuarios == null) 
             {
                 tblUsuarios = new List<Usuario>();
@@ -46,7 +48,7 @@ namespace Datos
                 actividadExistente.Titulo = e.Titulo;
                 actividadExistente.Descripcion = e.Descripcion;
                 actividadExistente.FechaCreacion = e.FechaCreacion;
-                actividadExistente.Estado = e.Estado;
+                actividadExistente.estado = e.Estado;
                 return true;
             }
             return false;
@@ -129,6 +131,11 @@ namespace Datos
             var usuario = ((ICapaDatos)this).LeeUsuario(email);
             if (usuario == null) return false;
             return usuario.ComprobarPassWord(password);
+        }
+
+        public List<Actividad> ObtenerActividadesUsuario(int idUsuario)
+        {
+            throw new NotImplementedException();
         }
     }
 }
