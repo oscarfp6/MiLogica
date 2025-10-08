@@ -78,7 +78,7 @@ namespace MiLogica.ModeloDatos
             {
                 this.intentosFallidosTimestamps.Clear();
                 Estado = EstadoUsuario.Activo;
-                this.lastLogin = DateTime.Now;
+                this.LastLogin = DateTime.Now;
                 return true;
             }
             else
@@ -113,7 +113,7 @@ namespace MiLogica.ModeloDatos
         
         public bool DesbloquearUsuario (string email, string passwordDado )
         {
-            if (this.Email.Equals(email, StringComparison.OrdinalIgnoreCase) && (this.Estado == EstadoUsuario.Bloqueado || this.Estado == EstadoUsuario.Inactivo) && ComprobarHash) 
+            if (this.Email.Equals(email, StringComparison.OrdinalIgnoreCase) && (this.Estado == EstadoUsuario.Bloqueado || this.Estado == EstadoUsuario.Inactivo) && ComprobarHash(passwordDado)) 
             { 
                 RestablecerCuenta();
                 return true;
@@ -126,7 +126,7 @@ namespace MiLogica.ModeloDatos
         {
             if (this.Estado == EstadoUsuario.Activo)
             {
-                TimeSpan tiempoSinAcceder = DateTime.Now - this.lastLogin;
+                TimeSpan tiempoSinAcceder = DateTime.Now - this.LastLogin;
                 if(tiempoSinAcceder > TimeSpan.FromDays(182)) // Aproximadamente 6 meses
                 {
                     this.Estado = EstadoUsuario.Inactivo;
@@ -171,7 +171,7 @@ namespace MiLogica.ModeloDatos
 
         public override string ToString()
         {
-            return $"ID: {id}, Nombre: {nombre}, Apellidos: {apellidos}, Email: {email}, Suscripción: {suscripcion}, Estado: {estado}, Último Login: {lastLogin}";
+            return $"ID: {Id}, Nombre: {Nombre}, Apellidos: {Apellidos}, Email: {Email}, Suscripción: {Suscripcion}, Estado: {Estado}, Último Login: {LastLogin}";
         }
 
     }
